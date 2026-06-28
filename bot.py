@@ -192,13 +192,23 @@ async def budget_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('\n'.join(lines), parse_mode='Markdown')
 
 async def dashboard_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /dashboard command — send cloud URL."""
-    # Assuming they use PythonAnywhere for hosting
+    """Handle /dashboard command — send cloud URL and file."""
     url = "https://bismaya17.pythonanywhere.com/dashboard.html"
     await update.message.reply_text(
-        f'📊 Here is your live, 24/7 Cloud Dashboard URL:\n{url}\n\n*(This works from anywhere, even when your laptop is completely turned off!)*',
+        f'📊 Here is your live Cloud Dashboard URL:\n{url}\n\n*(This works from anywhere!)*',
         parse_mode='Markdown'
     )
+    
+    # Also send the standalone HTML file
+    import os
+    _DIR = os.path.dirname(os.path.abspath(__file__))
+    mobile_file = os.path.join(_DIR, 'dashboard_mobile.html')
+    if os.path.exists(mobile_file):
+        await update.message.reply_document(
+            document=open(mobile_file, 'rb'),
+            filename='Expense_Dashboard.html',
+            caption='Or download this standalone file to view offline!'
+        )
 
 async def ask_expert_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /ask command — talk to AI financial expert."""
