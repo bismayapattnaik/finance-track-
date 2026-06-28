@@ -588,7 +588,7 @@ body {
 
 <!-- Load external data (optional) -->
 <script>
-window.EXPENSE_DATA = [{"id": 5, "date": "2026-06-29", "category": "salary", "amount": 20000.0, "note": "Starting income", "type": "income"}, {"id": 4, "date": "2026-06-29", "category": "other", "amount": 1.0, "note": "*9850 29-06-26 7008859825@s 618003453667 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 3, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 2, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 1, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}];
+window.EXPENSE_DATA = [{"id": 6, "date": "2026-06-29", "category": "other", "amount": 1.0, "note": "*9850 29-06-26 7008859825@s 618003586112 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 5, "date": "2026-06-29", "category": "salary", "amount": 20000.0, "note": "Starting income", "type": "income"}, {"id": 4, "date": "2026-06-29", "category": "other", "amount": 1.0, "note": "*9850 29-06-26 7008859825@s 618003453667 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 3, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 2, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}, {"id": 1, "date": "2026-06-28", "category": "other", "amount": 1.0, "note": "*9850 28-06-26 7008859825@s 617902924082 Not you? SMS BLOCK 9289592895, Dial 1930 for Cyber Fraud - Indian Bank", "type": "expense"}];
 window.EXPENSE_CONFIG = {"currency": "₹", "monthlyBudget": 50000, "budgets": {"food": 8000, "travel": 5000, "groceries": 6000, "clothes": 4000, "rent": 15000, "bills": 5000, "luxuries": 3000, "investments": 10000, "health": 3000, "education": 2000, "other": 3000}};
 
 </script>
@@ -850,7 +850,8 @@ function render() {
   const monthIncome = incomes(monthData);
   const totalSpent = totalAmount(monthExpenses);
   const totalInc = totalAmount(monthIncome);
-  const budget = CFG.monthlyBudget;
+  const baseBudget = CFG.monthlyBudget;
+  const budget = totalInc > 0 ? totalInc : baseBudget;
   const pctSpent = budget > 0 ? (totalSpent / budget * 100) : 0;
   const days = daysInMonth(mk);
   const today = new Date();
@@ -886,7 +887,8 @@ function render() {
   const summaryGrid = el('div', 'summary-grid animate-in');
 
   // Spent
-  const c1 = statCard('Spent This Month', formatINR(totalSpent), overBudget ? 'red' : 'cyan', 'of ' + formatINR(budget) + ' budget');
+  const budgetLabel = totalInc > 0 ? 'income' : 'budget';
+  const c1 = statCard('Spent This Month', formatINR(totalSpent), overBudget ? 'red' : 'cyan', 'of ' + formatINR(budget) + ' ' + budgetLabel);
   summaryGrid.appendChild(c1);
 
   // Income
@@ -895,11 +897,11 @@ function render() {
 
   // Remaining
   const remaining = budget - totalSpent;
-  const c3 = statCard('Remaining', formatINR(remaining), remaining >= 0 ? 'green' : 'red', remaining >= 0 ? 'under budget' : 'over budget!');
+  const c3 = statCard('Remaining', formatINR(remaining), remaining >= 0 ? 'green' : 'red', remaining >= 0 ? 'left to spend' : 'over spent!');
   summaryGrid.appendChild(c3);
 
   // Projected
-  const c4 = statCard('Projected', formatINR(projected), projOver ? 'red' : 'green', projOver ? 'will exceed budget' : 'on track');
+  const c4 = statCard('Projected', formatINR(projected), projOver ? 'red' : 'green', projOver ? 'will exceed ' + budgetLabel : 'on track');
   summaryGrid.appendChild(c4);
 
   app.appendChild(summaryGrid);

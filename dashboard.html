@@ -587,7 +587,7 @@ body {
 <div class="dashboard" id="app"></div>
 
 <!-- Load external data (optional) -->
-<script src="data.js"></script>
+<script>document.write('<script src="data.js?v=' + new Date().getTime() + '"><\/script>');</script>
 
 <script>
 // ═══════════════════════════════════════════════════════════
