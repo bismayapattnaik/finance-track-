@@ -194,7 +194,7 @@ async def budget_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def dashboard_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /dashboard command — send cloud URL."""
     # Assuming they use PythonAnywhere for hosting
-    url = "https://bismayapattnaik.pythonanywhere.com/dashboard.html"
+    url = "https://bismaya17.pythonanywhere.com/dashboard.html"
     await update.message.reply_text(
         f'📊 Here is your live, 24/7 Cloud Dashboard URL:\n{url}\n\n*(This works from anywhere, even when your laptop is completely turned off!)*',
         parse_mode='Markdown'
