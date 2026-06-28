@@ -1,0 +1,10 @@
+{
+  "telegram_token": "YOUR_BOT_TOKEN_HERE",
+  "currency": "₹",
+  "monthlyBudget": 50000,
+  "budgets": {
+    "food": 10000,
+    "transport": 5000,
+    "shopping": 5000
+  }
+}
