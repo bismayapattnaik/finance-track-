@@ -200,6 +200,52 @@ async def dashboard_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode='Markdown'
     )
 
+async def ask_expert_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle /ask command — talk to AI financial expert."""
+    question = ' '.join(context.args)
+    if not question:
+        await update.message.reply_text("🤔 What is your financial question? \nUsage: `/ask Should I buy a new phone this month?`", parse_mode='Markdown')
+        return
+
+    gemini_key = CFG.config.get('gemini_api_key', '')
+    if not gemini_key or gemini_key == 'YOUR_GEMINI_API_KEY':
+        await update.message.reply_text("🤖 **AI Expert is offline!**\nYou need to add your free Gemini API key to your `config.json` to use the financial expert feature.", parse_mode='Markdown')
+        return
+
+    await update.message.reply_text("🧠 *Analyzing your finances...*", parse_mode='Markdown')
+    
+    try:
+        from google import genai
+        client = genai.Client(api_key=gemini_key)
+        
+        # Get financial context
+        month = _current_month()
+        rows = month_rows(month)
+        spent = sum(r['amount'] for r in rows if r['type'] == 'expense')
+        income = sum(r['amount'] for r in rows if r['type'] == 'income')
+        budget = CFG.monthlyBudget
+        
+        prompt = f"""
+You are a brilliant, highly analytical Financial Advisor bot. 
+The user is asking you for financial advice. Here is their current financial context for this month:
+- Total Budget: {budget}
+- Total Spent: {spent}
+- Total Income: {income}
+- Remaining Budget: {budget - spent}
+
+User's Question: "{question}"
+
+Answer directly, professionally, and keep it under 3 paragraphs. Use emojis where appropriate.
+"""
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
+        
+        await update.message.reply_text(response.text, parse_mode='Markdown')
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error talking to AI: {e}")
+
 
 # ---------------------------------------------------------------------------
 # ntfy.sh background listener
@@ -332,6 +378,7 @@ def main():
     app.add_handler(CommandHandler('undo', undo))
     app.add_handler(CommandHandler('budget', budget_cmd))
     app.add_handler(CommandHandler('dashboard', dashboard_cmd))
+    app.add_handler(CommandHandler('ask', ask_expert_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print('Bot is running... Press Ctrl+C to stop.')
