@@ -846,7 +846,8 @@ function render() {
   const monthIncome = incomes(monthData);
   const totalSpent = totalAmount(monthExpenses);
   const totalInc = totalAmount(monthIncome);
-  const budget = CFG.monthlyBudget;
+  const baseBudget = CFG.monthlyBudget;
+  const budget = totalInc > 0 ? totalInc : baseBudget;
   const pctSpent = budget > 0 ? (totalSpent / budget * 100) : 0;
   const days = daysInMonth(mk);
   const today = new Date();
@@ -882,7 +883,8 @@ function render() {
   const summaryGrid = el('div', 'summary-grid animate-in');
 
   // Spent
-  const c1 = statCard('Spent This Month', formatINR(totalSpent), overBudget ? 'red' : 'cyan', 'of ' + formatINR(budget) + ' budget');
+  const budgetLabel = totalInc > 0 ? 'income' : 'budget';
+  const c1 = statCard('Spent This Month', formatINR(totalSpent), overBudget ? 'red' : 'cyan', 'of ' + formatINR(budget) + ' ' + budgetLabel);
   summaryGrid.appendChild(c1);
 
   // Income
@@ -891,11 +893,11 @@ function render() {
 
   // Remaining
   const remaining = budget - totalSpent;
-  const c3 = statCard('Remaining', formatINR(remaining), remaining >= 0 ? 'green' : 'red', remaining >= 0 ? 'under budget' : 'over budget!');
+  const c3 = statCard('Remaining', formatINR(remaining), remaining >= 0 ? 'green' : 'red', remaining >= 0 ? 'left to spend' : 'over spent!');
   summaryGrid.appendChild(c3);
 
   // Projected
-  const c4 = statCard('Projected', formatINR(projected), projOver ? 'red' : 'green', projOver ? 'will exceed budget' : 'on track');
+  const c4 = statCard('Projected', formatINR(projected), projOver ? 'red' : 'green', projOver ? 'will exceed ' + budgetLabel : 'on track');
   summaryGrid.appendChild(c4);
 
   app.appendChild(summaryGrid);
