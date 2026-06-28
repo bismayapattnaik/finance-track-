@@ -192,20 +192,11 @@ async def budget_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('\n'.join(lines), parse_mode='Markdown')
 
 async def dashboard_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /dashboard command — send dashboard URL."""
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('10.255.255.255', 1))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = '127.0.0.1'
-    finally:
-        s.close()
-        
-    url = f"http://{ip}:8000/dashboard.html"
+    """Handle /dashboard command — send cloud URL."""
+    # Assuming they use PythonAnywhere for hosting
+    url = "https://bismayapattnaik.pythonanywhere.com/dashboard.html"
     await update.message.reply_text(
-        f'📊 Here is your live dashboard URL:\n{url}\n\n*(Make sure you are on the same WiFi as your laptop!)*',
+        f'📊 Here is your live, 24/7 Cloud Dashboard URL:\n{url}\n\n*(This works from anywhere, even when your laptop is completely turned off!)*',
         parse_mode='Markdown'
     )
 
